@@ -75,3 +75,7 @@ Links
 - https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.Performance.html
 
 - https://sqlperformance.com/2015/03/io-subsystem/monitoring-read-write-latency
+
+- https://d1.awsstatic.com/whitepapers/RDS/amazon-aurora-connection-management-handbook.pdf
+
+- https://aws.amazon.com/blogs/database/best-practices-for-amazon-aurora-mysql-database-configuration/
