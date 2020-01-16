@@ -1,0 +1,95 @@
+Cambiar el password de root
+===========================
+/etc/init.d/mysql stop
+sudo mysqld_safe --skip-grant-tables & 
+mysql -u root
+use mysql; 
+UPDATE user SET password=PASSWORD('dbp455w0rd') WHERE user='root';
+flush privileges; 
+quit
+sudo /etc/init.d/mysql stop
+sudo /etc/init.d/mysql start
+mysql -u root -p
+
+
+Crear usuario con solo lectura
+==============================
+grant select on database_dev.* to 'readonlyuser'@'%' identified by '123456';
+
+Ver todas las bases de datos
+============================
+show databases;
+show tables like '%ips_white_list_tbl%';
+
+Usar una base de datos
+======================
+use <Nombre_de_la_bd>>
+p.e: use db_alpha
+
+Ver todas las tablas de una base de datos
+=========================================
+show tables;
+
+Consideraciones de mysql en CentOS
+==================================
+El directorio de datos es: /var/lib/mysql
+El archivo de configuracion esta en: /usr/my.cnf
+el password de root lo genera en: /root/.mysql_secret
+
+
+Conectarse a una base de datos
+==============================
+mysql -h al_alpha_db -p -u '$lmnode' -P 3309 al_alpha -A
+Password: dbp4ss
+
+describe sensor_tbl;
+
+
+mysqldump
+=========
+mysqldump -h 127.0.0.1 -u db_user -psecretpassword db_name > import_file.sql
+./mysqldump --column-statistics=0 -h 35.202.236.171 -u root -puin3560@W purplulab_concept_groups_2 > /Users/carlosllano/file.sql
+
+mysqldump --user=dev --password=A4fEDOafIPNI8gMO --host=146.148.53.213 --protocol=tcp --port=3306 --default-character-set=utf8 --single-transaction=TRUE --skip-triggers "allconcepts_omop_api" -q --routines --events --set-gtid-purged=OFF --opt --quick --max_allowed_packet=1024M --net-buffer-length=32704 --ignore-table=allconcepts_omop_api.OBSOLETE_concept --ignore-table=allconcepts_omop_api.OBSOLETE_concept_relationship --ignore-table=allconcepts_omop_api.OBSOLETE_domain --ignore-table=allconcepts_omop_api.OBSOLETE_lnk_conceptgroups --ignore-table=allconcepts_omop_api.OBSOLETE_utility_domain --ignore-table=allconcepts_omop_api.OBSOLETE_utility_domain_concepts --ignore-table=allconcepts_omop_api.OBSOLETE_utility_domain_concepts_orig_ers > allconcepts_omop_api_dev.sql
+
+
+restore dump
+============
+nohup mysql -h development.cluster-cpvabibwgvmk.us-east-1.rds.amazonaws.com -P 3306 -u root --password=mcU%1X58A%rk allconcepts_omop_api < /tmp/allconcepts_omop_api26-819.sql &
+nohup mysql -h dev-instance-1.cpvabibwgvmk.us-east-1.rds.amazonaws.com -P 3306 -u root --password=mcU%1X58A%rk allconcepts_omop_api < CloudSQLExport20190827.sql > /home/ec2-user/dump/dump.log 2>&1 &
+
+mysql -h mtm-production.cluster-cpvabibwgvmk.us-east-1.rds.amazonaws.com -P 3306 -u admin --password=q5wJLEtX24vZxHZ5 allconcepts_omop_api < allconcepts_20191111_085257.sql
+
+
+Crear la base de datos en mysql
+===============================
+mysqladmin -h localhost -u root -pPasswordDeRoot create Movies
+mysqladmin -h localhost -u root -pPasswordDeRoot drop Movies
+mysql -h localhost -u root -pPasswordDeRoot
+show databases;
+show tables;
+
+
+sudo mysqladmin -u root -h localhost password 'mypassword'
+sudo mysqladmin -u root -h myhostname password 'mypassword'
+
+mysql -u root -p
+
+http://www.guia-ubuntu.com/index.php?title=MySQL
+
+
+Ejecutar scripts externos en mysql
+==================================
+export ALPHA_USER='root'
+export ALPHA_PASS='dbp455w0rd'
+export ALPHA_HOST='localhost'
+export ALPHA_PORT='3306'
+
+export NOTIFY_USER='root'
+export NOTIFY_PASS='dbp455w0rd'
+export NOTIFY_HOST='localhost'
+export NOTIFY_PORT='3306'
+
+mysql -u"$NOTIFY_USER" -p"$NOTIFY_PASS" -h"$NOTIFY_HOST" -P"$NOTIFY_PORT" < create_db_notify.sql
+
+for F in *.sql; do mysql -u"$NOTIFY_USER" -p"$NOTIFY_PASS" -h"$NOTIFY_HOST" -P"$NOTIFY_PORT"< $F; done
