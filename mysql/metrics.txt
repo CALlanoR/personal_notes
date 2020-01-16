@@ -1,0 +1,77 @@
+#   Metric description 	                    CloudWatch name 	            MySQL name
+--------------------------------------------------------------------------------------------------------------------
+1.  Queries                                 Queries (per second) 	        Queries (count)
+        The current rate of queries will naturally rise and fall, and as such is not always an actionable metric based on fixed thresholds alone. 
+        But it is worthwhile to alert on sudden changes in query volume—drastic drops in throughput, especially, can indicate a serious problem.
+
+2.  Reads                                   SelectThroughput (per second) 	Com_select + Qcache_hits (count)
+3.  Writes 	                                DMLThroughput (per second) 	    Com_insert + Com_update + Com_delete (count)
+
+4.  Read query latency, in milliseconds     SelectLatency 	                -
+        The amount of latency for select queries, in milliseconds.
+
+5.  Write query latency, in milliseconds 	DMLLatency 	                    -
+        The amount of latency for inserts, updates, and deletes, in milliseconds.
+
+        for both latencies (SelectLatency and DMLLatency):
+
+            What values are good or bad?
+
+            If you ask SQLskills, we will tell you something along the lines of:
+
+                Excellent: < 1ms
+                Very good: < 5ms
+                Good: 5 – 10ms
+                Poor: 10 – 20ms
+                Bad: 20 – 100ms
+                Really bad: 100 – 500ms
+                OMG!: > 500ms
+
+            If you do a Bing search, you will find articles from Microsoft making the recommendations similar to:
+
+                Good: < 10ms
+                Okay: 10 – 20ms
+                Bad: 20 – 50ms
+                Seriously bad: > 50ms
+
+            As you can see, there are some slight variations in the numbers, but the consensus is that anything over 20ms can be considered troublesome. With that being said, your average write latency may be 20ms and that is 100% acceptable for your organization and that is okay. You need to know general I/O latencies for your system so that, when things do get bad, you know what normal is. 
+
+6.  Available RAM in gigabytes 	            FreeableMemory 	memory.free 	-
+        RDS’s FreeableMemory metric refers to the amount of unused memory on a database instance. 
+        When this metric gets low, the OS of the database instance may begin to start swapping memory in and out of swap space. 
+        This will result in significantly slower reads and make your database unable to respond to requests.
+        To monitor FreeableMemory you should create a CloudWatch alarm on the metric’s Average aggregation that fires when you go below 100MB of free memory.
+
+
+7.  Percent CPU utilized 	                CPUUtilization 	total 	        -
+        CPUUtilization tracks the percent of CPU the database instance is using. 
+        While an excellent indicator of an overworked database, it tends to fluctuate a lot and can lead to noisy alerts.
+        The key to CPUUtilization is to look for sustained high CPU.
+
+8.  Read I/O operations per second 	        ReadIOPS diskIO.readIOsPS 	    -
+9.  Write I/O operations per second 	    WriteIOPS diskIO.writeIOsPS 	-
+
+10. Open database connections 	            DatabaseConnections 	        Threads_connected
+        RDS’s DatabaseConnections metric measures the number of connections to your database instance.
+        An anomalous number of connections can hint at unexpected behaviour in your application. 
+        More importantly, reaching the maximum number of connections for your database can also cause new connections to be rejected.
+
+        To determine the maximum number of connections, in that parameter group search for max_connections you will get the value.
+        RDS -> Parameter groups -> default.aurora-mysql5.7 (max_connections)
+
+11. Free Local Storage                      FreeLocalStorage                -
+ 	The amount of local storage available, in bytes. Unlike for other DB engines, for Aurora DB instances this metric reports the amount 
+     of storage available to each DB instance. This value depends on the DB instance class 
+
+
+Links
+=====
+- https://github.com/awsdocs/amazon-aurora-user-guide/tree/master/doc_source
+
+- https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.Performance.html
+
+- https://www.bluematador.com/blog/how-to-monitor-amazon-rds-with-cloudwatch
+
+- https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.Performance.html
+
+- https://sqlperformance.com/2015/03/io-subsystem/monitoring-read-write-latency
